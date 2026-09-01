@@ -369,7 +369,7 @@
   // =========================================================================
   // TETAPAN URL APPS SCRIPT WEB APP & NOMBOR WHATSAPP
   // =========================================================================
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymHn9GoYR0Sc0_PyPqfWfiGYVIZBcPdCV7Tos-PEa087PVj7ZmtGKMggj3IqSrMUk/exec";
+  const APPS_SCRIPT_URL = "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_ANDA_DI_SINI";
   const NO_WHATSAPP = "60105350291";
 
   // Muat turun data dashboard sebaik halaman dibuka dari GitHub
@@ -421,85 +421,91 @@
   }
 
   function hantarRekod(e) {
-  e.preventDefault();
+    e.preventDefault();
 
-  const overlay = document.getElementById("loadingOverlay");
-  const loadTitle = document.getElementById("loadingTitle");
-  const loadDesc = document.getElementById("loadingDesc");
+    const overlay = document.getElementById("loadingOverlay");
+    const loadTitle = document.getElementById("loadingTitle");
+    const loadDesc = document.getElementById("loadingDesc");
 
-  const nama = document.getElementById("nama").value;
-  const jumlah = document.getElementById("jumlah").value;
-  const kategori = document.getElementById("kategori").value;
-  const kaedah = document.getElementById("kaedah").value;
-  const catatan = document.getElementById("catatan").value;
+    const nama = document.getElementById("nama").value;
+    const jumlah = document.getElementById("jumlah").value;
+    const kategori = document.getElementById("kategori").value;
+    const kaedah = document.getElementById("kaedah").value;
+    const catatan = document.getElementById("catatan").value;
 
-  // 1. Tunjukkan Loading Screen di skrin utama
-  loadTitle.innerText = "Menyimpan Rekod...";
-  loadDesc.innerText = "Sila tunggu, data sedang direkodkan ke Sheet...";
-  overlay.style.display = "flex";
+    // 1. Buka tab awal bagi mengelakkan Popup Blocker pelayar
+    const waWindow = window.open("about:blank", "_blank");
 
-  const payload = {
-    nama: nama,
-    jumlah: jumlah,
-    kategori: kategori,
-    kaedah: kaedah,
-    catatan: catatan
-  };
+    // 2. Paparkan Loading Screen serta-merta
+    loadTitle.innerText = "Menyimpan Rekod...";
+    loadDesc.innerText = "Sila tunggu, rekod sedang dikemas kini ke Sheet.";
+    overlay.style.display = "flex";
 
-  // 2. Hantar data ke Google Apps Script
-  fetch(APPS_SCRIPT_URL, {
-    method: "POST",
-    body: JSON.stringify(payload)
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res && res.status === "success") {
-      loadTitle.innerText = "Membuka WhatsApp...";
-      loadDesc.innerText = "Membuka aplikasi WhatsApp...";
+    const payload = {
+      nama: nama,
+      jumlah: jumlah,
+      kategori: kategori,
+      kaedah: kaedah,
+      catatan: catatan
+    };
 
-      updateDashboardUI(res.metrics);
+    // 3. Hantar data terus ke Apps Script API
+    fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(res => {
+      if (res && res.status === "success") {
+        loadTitle.innerText = "Membuka WhatsApp...";
+        loadDesc.innerText = "Draf mesej sedang disediakan...";
 
-      const amtFormatted = parseFloat(jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2 });
-      
-      const message = `💍 *REKOD TABUNG KAHWIN MASUK* 💍\n\n` +
-                      `🆔 *ID:* \`${res.transId}\`\n` +
-                      `👤 *Penyumbang:* ${nama}\n` +
-                      `💵 *Jumlah Masuk:* RM ${amtFormatted}\n` +
-                      `📂 *Kategori:* ${kategori}\n` +
-                      `💳 *Kaedah:* ${kaedah}\n` +
-                      `📝 *Catatan:* ${catatan || '-'}\n` +
-                      `⏰ *Masa:* ${res.timestamp}\n\n` +
-                      `──────────────────────\n` +
-                      `💰 *JUMLAH TERKUMPUL:* *RM ${res.metrics.totalAll}*\n` +
-                      `🎯 *KEMAJUAN SASARAN:* ${res.metrics.peratus}%\n` +
-                      `👨 Lelaki: RM ${res.metrics.totalLelaki}\n` +
-                      `👩 Perempuan: RM ${res.metrics.totalPerempuan}\n` +
-                      `──────────────────────\n` +
-                      `_Alhamdulillah, rekod berjaya dikemaskini!_ ✨`;
+        updateDashboardUI(res.metrics);
 
-      // 3. GUNAKAN PROTOKOL DEEP LINK UNTUK TERUS BUKA APP WHATSAPP
-      const directAppUrl = `whatsapp://send?phone=${NO_WHATSAPP}&text=${encodeURIComponent(message)}`;
+        const amtFormatted = parseFloat(jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2 });
+        
+        const message = `💍 *REKOD TABUNG KAHWIN MASUK* 💍\n\n` +
+                        `🆔 *ID:* \`${res.transId}\`\n` +
+                        `👤 *Penyumbang:* ${nama}\n` +
+                        `💵 *Jumlah Masuk:* RM ${amtFormatted}\n` +
+                        `📂 *Kategori:* ${kategori}\n` +
+                        `💳 *Kaedah:* ${kaedah}\n` +
+                        `📝 *Catatan:* ${catatan || '-'}\n` +
+                        `⏰ *Masa:* ${res.timestamp}\n\n` +
+                        `──────────────────────\n` +
+                        `💰 *JUMLAH TERKUMPUL:* *RM ${res.metrics.totalAll}*\n` +
+                        `🎯 *KEMAJUAN SASARAN:* ${res.metrics.peratus}%\n` +
+                        `👨 Lelaki: RM ${res.metrics.totalLelaki}\n` +
+                        `👩 Perempuan: RM ${res.metrics.totalPerempuan}\n` +
+                        `──────────────────────\n` +
+                        `_Alhamdulillah, rekod berjaya dikemaskini!_ ✨`;
 
-      // Terus buka aplikasi WhatsApp secara automatik
-      window.location.href = directAppUrl;
+        const waUrl = `https://wa.me/${NO_WHATSAPP}?text=${encodeURIComponent(message)}`;
 
-      // Reset borang
-      setTimeout(() => {
+        // Muatkan WhatsApp pada tab yang telah disediakan
+        if (waWindow) {
+          waWindow.location.href = waUrl;
+        }
+
+        // Tutup loading screen dan reset form
+        setTimeout(() => {
+          overlay.style.display = "none";
+          document.getElementById("jumlah").value = "";
+          document.getElementById("catatan").value = "";
+        }, 800);
+
+      } else {
+        if (waWindow) waWindow.close();
         overlay.style.display = "none";
-        document.getElementById("jumlah").value = "";
-        document.getElementById("catatan").value = "";
-      }, 1000);
-
-    } else {
+        alert("Gagal simpan: " + (res ? res.message : "Ralat"));
+      }
+    })
+    .catch(err => {
+      if (waWindow) waWindow.close();
       overlay.style.display = "none";
-      alert("Gagal simpan: " + (res ? res.message : "Ralat"));
-    }
-  })
-  .catch(err => {
-    overlay.style.display = "none";
-    alert("Ralat penghantaran: " + err.message);
-  });
-}
+      alert("Ralat penghantaran ke API: " + err.message);
+    });
+  }
 </script>
 
 </body>
