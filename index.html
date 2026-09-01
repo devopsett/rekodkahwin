@@ -189,6 +189,44 @@
     }
     .btn-submit:active { transform: scale(0.98); }
 
+    /* Kotak Tindakan Selepas Simpan */
+    #successActionBox {
+      display: none;
+      background: #f0fdf4;
+      border: 1.5px solid #86efac;
+      padding: 18px 16px;
+      border-radius: 14px;
+      text-align: center;
+      margin-top: 10px;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .btn-whatsapp-direct {
+      display: block;
+      background-color: #25d366;
+      color: white;
+      text-decoration: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 14px;
+      margin-top: 12px;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+    }
+    .btn-reset-form {
+      background: none;
+      border: none;
+      color: #166534;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 12px;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
     /* Recent Transactions Card */
     .recent-card {
       background: #ffffff;
@@ -204,7 +242,7 @@
     .item-tag { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
     .item-amount { font-weight: 800; font-size: 14px; color: var(--emerald); }
 
-    /* Main Page Overlay Screen */
+    /* Loading Overlay Screen */
     .loading-overlay {
       display: none;
       position: fixed;
@@ -218,10 +256,7 @@
       color: #ffffff;
       text-align: center;
       padding: 20px;
-      animation: fadeInOverlay 0.2s ease-out;
     }
-    @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
-
     .loading-box {
       background: rgba(30, 41, 59, 0.95);
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -234,7 +269,6 @@
       max-width: 300px;
       width: 100%;
     }
-
     .spinner {
       width: 48px;
       height: 48px;
@@ -245,7 +279,6 @@
       margin-bottom: 16px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     .loading-title { font-size: 15px; font-weight: 800; margin-bottom: 4px; color: #ffffff; }
     .loading-desc { font-size: 12px; color: #94a3b8; }
   </style>
@@ -341,38 +374,43 @@
       </div>
 
       <button type="submit" id="btnSubmit" class="btn-submit">
-        <span>📲</span> Simpan & Buka WhatsApp
+        <span>💾</span> Simpan & Jana Mesej WhatsApp
       </button>
     </form>
+
+    <!-- KOTAK TINDAKAN SELEPAS BERJAYA SIMPAN -->
+    <div id="successActionBox">
+      <div style="font-weight: 800; font-size: 14px; color: #166534; margin-bottom: 2px;">✅ Data Berjaya Disimpan ke Sheet!</div>
+      <div style="font-size: 12px; color: #15803d; margin-bottom: 8px;">Tekan butang hijau di bawah untuk buka WhatsApp terus:</div>
+      <a id="btnWhatsAppDirect" href="#" class="btn-whatsapp-direct" target="_blank">📲 Buka WhatsApp (010-5350291)</a>
+      <button type="button" class="btn-reset-form" onclick="resetBorangBaru()">+ Masukkan Rekod Baharu</button>
+    </div>
   </div>
 
   <!-- SENARAI REKOD TERKINI -->
   <div class="recent-card">
     <h4>📋 Rekod Transaksi Terkini</h4>
     <div id="uiRecentList">
-      <div style="color: #94a3b8; font-size: 13px; text-align: center; padding: 12px 0;">Memuatkan data...</div>
+      <div style="color: #94a3b8; font-size: 13px; text-align: center; padding: 12px 0;">Memuatkan data terkini...</div>
     </div>
   </div>
 
 </div>
 
-<!-- LOADING OVERLAY UTAMA -->
+<!-- LOADING OVERLAY -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-box">
     <div class="spinner"></div>
-    <div class="loading-title" id="loadingTitle">Menyimpan Rekod...</div>
-    <div class="loading-desc" id="loadingDesc">Sila tunggu, rekod sedang dikemas kini ke Sheet.</div>
+    <div class="loading-title">Menyimpan Rekod...</div>
+    <div class="loading-desc">Sila tunggu sebentar, sedang dikemas kini ke Sheet.</div>
   </div>
 </div>
 
 <script>
-  // =========================================================================
-  // URL WEB APP APPS SCRIPT ANDA & NOMBOR WHATSAPP
-  // =========================================================================
+  // URL Web App Google Apps Script anda & No WhatsApp Rasmi
   const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymHn9GoYR0Sc0_PyPqfWfiGYVIZBcPdCV7Tos-PEa087PVj7ZmtGKMggj3IqSrMUk/exec";
   const NO_WHATSAPP = "60105350291";
 
-  // Muat turun data dashboard sebaik sahaja halaman dibuka di GitHub
   window.addEventListener('DOMContentLoaded', () => {
     fetchDashboardData();
   });
@@ -385,9 +423,7 @@
           updateDashboardUI(data);
         }
       })
-      .catch(err => {
-        console.error("Gagal memuatkan data:", err);
-      });
+      .catch(err => console.error("Ralat memuat turun data:", err));
   }
 
   function updateDashboardUI(data) {
@@ -424,8 +460,9 @@
     e.preventDefault();
 
     const overlay = document.getElementById("loadingOverlay");
-    const loadTitle = document.getElementById("loadingTitle");
-    const loadDesc = document.getElementById("loadingDesc");
+    const successBox = document.getElementById("successActionBox");
+    const btnWhatsApp = document.getElementById("btnWhatsAppDirect");
+    const formElement = document.getElementById("recordForm");
 
     const nama = document.getElementById("nama").value;
     const jumlah = document.getElementById("jumlah").value;
@@ -433,86 +470,6 @@
     const kaedah = document.getElementById("kaedah").value;
     const catatan = document.getElementById("catatan").value;
 
-    // 1. BUKA TAB BAHARU
-    const waWindow = window.open("", "_blank");
-
-    // 2. SUNTIK SPLASH LOADING SCREEN KE DALAM TAB BAHARU SUPAYA TIDAK BLANK
-    if (waWindow) {
-      waWindow.document.write(`
-        <!DOCTYPE html>
-        <html lang="ms">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-          <title>Membuka WhatsApp...</title>
-          <link rel="preconnect" href="https://fonts.googleapis.com">
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-          <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
-          <style>
-            * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-            body {
-              background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-              color: #ffffff;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              height: 100vh;
-              margin: 0;
-              padding: 20px;
-              text-align: center;
-            }
-            .splash-card {
-              background: rgba(255, 255, 255, 0.05);
-              backdrop-filter: blur(12px);
-              border: 1px solid rgba(255, 255, 255, 0.12);
-              padding: 36px 26px;
-              border-radius: 26px;
-              box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
-              max-width: 340px;
-              width: 100%;
-            }
-            .spinner-ring {
-              width: 52px;
-              height: 52px;
-              border: 4px solid rgba(255, 255, 255, 0.15);
-              border-top-color: #25d366;
-              border-radius: 50%;
-              animation: spin 0.8s linear infinite;
-              margin: 0 auto 20px;
-            }
-            @keyframes spin { to { transform: rotate(360deg); } }
-            h2 { font-size: 18px; font-weight: 800; margin: 0 0 6px; }
-            p { font-size: 13px; color: #94a3b8; margin: 0 0 16px; }
-            .badge-wa {
-              display: inline-flex;
-              align-items: center;
-              gap: 6px;
-              background: rgba(37, 211, 102, 0.15);
-              color: #25d366;
-              font-size: 12px;
-              font-weight: 700;
-              padding: 6px 14px;
-              border-radius: 20px;
-              border: 1px solid rgba(37, 211, 102, 0.3);
-            }
-          </style>
-        </head>
-        <body>
-          <div class="splash-card">
-            <div class="spinner-ring"></div>
-            <h2>Menyediakan WhatsApp...</h2>
-            <p>Rekod sedang disimpan ke Google Sheet. Anda akan dipindahkan ke WhatsApp sebentar lagi.</p>
-            <div class="badge-wa">📲 010-5350291</div>
-          </div>
-        </body>
-        </html>
-      `);
-      waWindow.document.close();
-    }
-
-    // 3. Paparkan loading overlay pada halaman utama
-    loadTitle.innerText = "Menyimpan Rekod...";
-    loadDesc.innerText = "Sila tunggu, rekod sedang dikemas kini ke Sheet.";
     overlay.style.display = "flex";
 
     const payload = {
@@ -523,13 +480,14 @@
       catatan: catatan
     };
 
-    // 4. Hantar data ke Google Apps Script Web App
     fetch(APPS_SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify(payload)
     })
     .then(res => res.json())
     .then(res => {
+      overlay.style.display = "none";
+
       if (res && res.status === "success") {
         updateDashboardUI(res.metrics);
 
@@ -553,29 +511,24 @@
 
         const waUrl = `https://wa.me/${NO_WHATSAPP}?text=${encodeURIComponent(message)}`;
 
-        // 5. Buka pautan WhatsApp pada tetingkap splash screen tadi
-        if (waWindow) {
-          waWindow.location.href = waUrl;
-        }
-
-        // Tutup loading overlay dan reset input
-        setTimeout(() => {
-          overlay.style.display = "none";
-          document.getElementById("jumlah").value = "";
-          document.getElementById("catatan").value = "";
-        }, 800);
+        formElement.style.display = "none";
+        btnWhatsApp.href = waUrl;
+        successBox.style.display = "block";
 
       } else {
-        if (waWindow) waWindow.close();
-        overlay.style.display = "none";
         alert("Gagal simpan: " + (res ? res.message : "Ralat"));
       }
     })
     .catch(err => {
-      if (waWindow) waWindow.close();
       overlay.style.display = "none";
-      alert("Ralat penghantaran ke API: " + err.message);
+      alert("Ralat sambungan: " + err.message);
     });
+  }
+
+  function resetBorangBaru() {
+    document.getElementById("recordForm").reset();
+    document.getElementById("recordForm").style.display = "block";
+    document.getElementById("successActionBox").style.display = "none";
   }
 </script>
 
