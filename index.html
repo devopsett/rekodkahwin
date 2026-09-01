@@ -3,264 +3,362 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Dashboard Tabung Kahwin</title>
-  <!-- Google Fonts -->
+  <title>wedding-fund // repo</title>
+  <!-- GitHub Font: SF Mono, Segoe UI, Roboto -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --primary: #ec4899;
-      --primary-dark: #be185d;
-      --bg-dark: #0f172a;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --emerald: #10b981;
+      --gh-bg: #0d1117;
+      --gh-canvas: #010409;
+      --gh-subtle: #161b22;
+      --gh-border: #30363d;
+      --gh-text: #e6edf3;
+      --gh-muted: #8b949e;
+      --gh-link: #58a6ff;
+      --gh-green: #238636;
+      --gh-green-hover: #2ea043;
+      --gh-purple: #a371f7;
+      --gh-pink: #f778ba;
     }
 
     * {
       box-sizing: border-box;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background-color: #f8fafc;
+      background-color: var(--gh-bg);
       margin: 0;
       padding: 16px;
       display: flex;
       justify-content: center;
       min-height: 100vh;
-      color: var(--text-main);
+      color: var(--gh-text);
     }
 
     .app-container {
       width: 100%;
-      max-width: 440px;
+      max-width: 480px;
       margin: 0 auto;
-      padding-bottom: 30px;
+      padding-bottom: 40px;
     }
 
-    /* Top Bar */
-    .top-bar {
+    /* GitHub Repository Header */
+    .repo-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0 16px;
+      border-bottom: 1px solid var(--gh-border);
+      margin-bottom: 16px;
+    }
+
+    .repo-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-family: 'Fira Code', monospace;
+      color: var(--gh-muted);
+    }
+
+    .repo-title a {
+      color: var(--gh-link);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .badge-public {
+      border: 1px solid var(--gh-border);
+      background: var(--gh-subtle);
+      color: var(--gh-muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 12px;
+    }
+
+    /* Hero Metrics Block */
+    .gh-box {
+      background-color: var(--gh-subtle);
+      border: 1px solid var(--gh-border);
+      border-radius: 6px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .gh-box-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
     }
-    .top-bar h1 {
-      font-size: 18px;
-      font-weight: 800;
-      margin: 0;
-      color: var(--text-main);
-    }
-    .live-indicator {
-      display: inline-flex;
+
+    .gh-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gh-muted);
+      font-family: 'Fira Code', monospace;
+      display: flex;
       align-items: center;
-      gap: 5px;
-      background: #dcfce7;
-      color: #15803d;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 9px;
-      border-radius: 20px;
+      gap: 6px;
     }
-    .pulse-dot {
-      width: 6px;
-      height: 6px;
-      background: #22c55e;
-      border-radius: 50%;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    /* Hero Dashboard Card */
-    .hero-card {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      color: #ffffff;
-      padding: 22px 20px;
-      border-radius: 22px;
-      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.2);
-      margin-bottom: 14px;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero-card::after {
-      content: "";
-      position: absolute;
-      top: -20px;
-      right: -20px;
-      width: 100px;
-      height: 100px;
-      background: radial-gradient(circle, rgba(236,72,153,0.3) 0%, rgba(236,72,153,0) 70%);
-      border-radius: 50%;
-    }
-    .hero-title {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: #94a3b8;
-    }
-    .hero-balance {
-      font-size: 32px;
+    .total-amount {
+      font-size: 30px;
       font-weight: 800;
-      margin: 4px 0 12px;
-      letter-spacing: -0.5px;
       color: #ffffff;
+      letter-spacing: -0.5px;
+      margin: 4px 0 14px;
+      font-family: 'Fira Code', monospace;
     }
 
-    /* Progress Target */
-    .progress-box { margin-bottom: 14px; }
-    .progress-info { display: flex; justify-content: space-between; font-size: 11px; color: #cbd5e1; margin-bottom: 6px; font-weight: 600; }
-    .progress-track { width: 100%; height: 8px; background: rgba(255,255,255,0.12); border-radius: 10px; overflow: hidden; }
-    .progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #ec4899, #f43f5e); border-radius: 10px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+    /* GitHub Language-style Progress Bar */
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: #21262d;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
 
-    /* Grid Stats */
-    .stats-grid {
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: #238636;
+      border-radius: 6px;
+      transition: width 0.8s ease;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--gh-muted);
+      font-family: 'Fira Code', monospace;
+    }
+
+    /* Split Contributions */
+    .split-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 14px;
+      gap: 12px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--gh-border);
     }
-    .stat-card {
-      background: #ffffff;
-      padding: 14px 16px;
-      border-radius: 16px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
-      border: 1px solid #f1f5f9;
-    }
-    .stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
-    .stat-value { font-size: 16px; font-weight: 800; color: var(--text-main); margin-top: 3px; }
 
-    /* Form Container */
-    .form-card {
-      background: #ffffff;
-      padding: 22px 20px;
-      border-radius: 20px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
-      border: 1px solid #f1f5f9;
+    .split-box {
+      background: var(--gh-bg);
+      border: 1px solid var(--gh-border);
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+
+    .split-title {
+      font-size: 11px;
+      color: var(--gh-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+    }
+
+    .dot-male { width: 8px; height: 8px; border-radius: 50%; background: var(--gh-link); }
+    .dot-female { width: 8px; height: 8px; border-radius: 50%; background: var(--gh-pink); }
+
+    .split-val {
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-top: 4px;
+      font-family: 'Fira Code', monospace;
+    }
+
+    /* GitHub Issue/PR Form Style */
+    .card-title-bar {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gh-text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .form-group {
       margin-bottom: 14px;
     }
-    .form-card h3 { margin: 0 0 16px; font-size: 15px; font-weight: 800; color: var(--text-main); }
-    .form-group { margin-bottom: 13px; }
-    label { display: block; font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
-    
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gh-text);
+      margin-bottom: 6px;
+    }
+
     .input-field, select {
       width: 100%;
-      padding: 12px 14px;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 12px;
-      font-size: 14px;
-      color: var(--text-main);
-      background-color: #f8fafc;
+      background-color: var(--gh-canvas);
+      border: 1px solid var(--gh-border);
+      border-radius: 6px;
+      padding: 9px 12px;
+      color: var(--gh-text);
+      font-size: 13px;
       outline: none;
-      transition: all 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
+
     .input-field:focus, select:focus {
-      border-color: var(--primary);
-      background-color: #ffffff;
-      box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.12);
+      border-color: var(--gh-link);
+      box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
     }
 
-    .currency-wrap { position: relative; }
-    .currency-tag { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-weight: 800; color: #94a3b8; font-size: 14px; }
-    .currency-wrap input { padding-left: 44px; font-weight: 800; font-size: 16px; color: var(--text-main); }
+    .currency-wrap {
+      position: relative;
+    }
 
-    /* Action Button */
-    .btn-submit {
+    .currency-prefix {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gh-muted);
+      font-family: 'Fira Code', monospace;
+    }
+
+    .currency-wrap input {
+      padding-left: 42px;
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+    }
+
+    /* GitHub Primary Action Button */
+    .btn-gh {
       width: 100%;
-      background: linear-gradient(135deg, #25d366 0%, #16a34a 100%);
+      background-color: var(--gh-green);
       color: #ffffff;
-      border: none;
-      padding: 14px;
-      border-radius: 12px;
-      font-size: 15px;
-      font-weight: 800;
+      border: 1px solid rgba(240, 246, 252, 0.1);
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 6px 16px rgba(37, 211, 102, 0.28);
-      transition: 0.2s;
-      margin-top: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      transition: background-color 0.2s;
+      margin-top: 6px;
     }
-    .btn-submit:active { transform: scale(0.98); }
 
-    /* Recent Transactions Card */
-    .recent-card {
-      background: #ffffff;
-      padding: 18px 20px;
-      border-radius: 20px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
-      border: 1px solid #f1f5f9;
+    .btn-gh:hover {
+      background-color: var(--gh-green-hover);
     }
-    .recent-card h4 { margin: 0 0 12px; font-size: 14px; font-weight: 800; color: var(--text-main); }
-    .recent-item { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid #f8fafc; }
-    .recent-item:last-child { border-bottom: none; }
-    .item-name { font-weight: 700; font-size: 13px; color: #1e293b; }
-    .item-tag { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-    .item-amount { font-weight: 800; font-size: 14px; color: var(--emerald); }
 
-    /* ===================================================
-       LOADING OVERLAY UI
-       =================================================== */
-    .loading-overlay {
+    .btn-gh:active {
+      transform: scale(0.99);
+    }
+
+    /* Recent Commits List */
+    .commit-header {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gh-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0 0 10px;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .commit-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .commit-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gh-border);
+      font-size: 12px;
+    }
+
+    .commit-item:last-child {
+      border-bottom: none;
+    }
+
+    .commit-desc {
+      font-weight: 600;
+      color: var(--gh-text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .commit-tag {
+      font-size: 11px;
+      color: var(--gh-muted);
+      margin-top: 2px;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .commit-amt {
+      font-family: 'Fira Code', monospace;
+      font-weight: 700;
+      color: #3fb950;
+      text-align: right;
+    }
+
+    /* GitHub-style Loading Overlay */
+    .gh-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.82);
-      backdrop-filter: blur(8px);
-      z-index: 99999;
+      background: rgba(1, 4, 9, 0.85);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      color: #ffffff;
+      color: var(--gh-text);
       text-align: center;
       padding: 20px;
-      animation: fadeInOverlay 0.2s ease-out;
-    }
-    @keyframes fadeInOverlay {
-      from { opacity: 0; }
-      to { opacity: 1; }
     }
 
-    .loading-box {
-      background: rgba(30, 41, 59, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 28px 24px;
-      border-radius: 24px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      max-width: 300px;
-      width: 100%;
-    }
-
-    .spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid rgba(255, 255, 255, 0.15);
-      border-top-color: #25d366;
+    .gh-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(139, 148, 158, 0.2);
+      border-top-color: var(--gh-link);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
+
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .loading-title {
-      font-size: 15px;
-      font-weight: 800;
+    .gh-overlay-title {
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Fira Code', monospace;
       margin-bottom: 4px;
-      color: #ffffff;
     }
 
-    .loading-desc {
+    .gh-overlay-desc {
       font-size: 12px;
-      color: #94a3b8;
+      color: var(--gh-muted);
     }
   </style>
 </head>
@@ -268,47 +366,52 @@
 
 <div class="app-container">
 
-  <!-- TOP BAR -->
-  <div class="top-bar">
-    <h1>💍 Tabung Kahwin</h1>
-    <span class="live-indicator"><span class="pulse-dot"></span> Live Sync</span>
+  <!-- REPO HEADER -->
+  <div class="repo-header">
+    <div class="repo-title">
+      <span>📁</span>
+      <a href="#">wedding-fund</a> / <span>main</span>
+    </div>
+    <span class="badge-public">Public</span>
   </div>
 
-  <!-- HERO DASHBOARD -->
-  <div class="hero-card">
-    <div class="hero-title">Jumlah Tabung Terkumpul</div>
-    <div class="hero-balance" id="uiTotal">RM 0.00</div>
-    
-    <div class="progress-box">
-      <div class="progress-info">
-        <span>Sasaran: RM <span id="uiTarget">20,000.00</span></span>
-        <span id="uiPeratus">0.0%</span>
+  <!-- DASHBOARD BOX -->
+  <div class="gh-box">
+    <div class="gh-box-header">
+      <span class="gh-label">⚡ TOTAL_COMMITTED</span>
+      <span style="font-size: 11px; color: var(--gh-muted); font-family:'Fira Code', monospace;">target: RM <span id="uiTarget">20,000.00</span></span>
+    </div>
+    <div class="total-amount" id="uiTotal">RM 0.00</div>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="uiProgressFill"></div>
+    </div>
+    <div class="progress-meta">
+      <span>Progress</span>
+      <span id="uiPeratus">0.0%</span>
+    </div>
+
+    <div class="split-grid">
+      <div class="split-box">
+        <div class="split-title"><span class="dot-male"></span> Pihak Lelaki</div>
+        <div class="split-val" id="uiLelaki">RM 0.00</div>
       </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="uiProgressFill"></div>
+      <div class="split-box">
+        <div class="split-title"><span class="dot-female"></span> Pihak Perempuan</div>
+        <div class="split-val" id="uiPerempuan">RM 0.00</div>
       </div>
     </div>
   </div>
 
-  <!-- STATS GRID -->
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">👨 Pihak Lelaki</div>
-      <div class="stat-value" id="uiLelaki" style="color:#2563eb;">RM 0.00</div>
+  <!-- FORM CONTAINER -->
+  <div class="gh-box">
+    <div class="card-title-bar">
+      <span>📝</span> create new contribution
     </div>
-    <div class="stat-card">
-      <div class="stat-label">👩 Pihak Perempuan</div>
-      <div class="stat-value" id="uiPerempuan" style="color:#db2777;">RM 0.00</div>
-    </div>
-  </div>
-
-  <!-- BORANG SIMPAN REKOD -->
-  <div class="form-card">
-    <h3>➕ Tambah Simpanan Duit</h3>
-    <form id="recordForm" onsubmit="hantarRekodPantas(event)">
+    <form id="recordForm" onsubmit="hantarRekodGitHub(event)">
       
       <div class="form-group">
-        <label>Penyumbang</label>
+        <label>Author / Penyumbang</label>
         <select id="nama" required>
           <option value="" disabled selected>Pilih penyumbang...</option>
           <option value="Pengantin Lelaki">Pengantin Lelaki</option>
@@ -319,15 +422,15 @@
       </div>
 
       <div class="form-group">
-        <label>Jumlah Masuk (RM)</label>
+        <label>Amount (RM)</label>
         <div class="currency-wrap">
-          <span class="currency-tag">RM</span>
-          <input type="number" step="0.01" min="0.01" id="jumlah" placeholder="0.00" required>
+          <span class="currency-prefix">RM</span>
+          <input type="number" step="0.01" min="0.01" id="jumlah" class="input-field" placeholder="0.00" required>
         </div>
       </div>
 
       <div class="form-group">
-        <label>Kategori Peruntukan</label>
+        <label>Category Label</label>
         <select id="kategori" required>
           <option value="Simpanan Asas">Simpanan Asas</option>
           <option value="Katering & Jamuan">Katering & Jamuan</option>
@@ -340,7 +443,7 @@
       </div>
 
       <div class="form-group">
-        <label>Kaedah Transaksi</label>
+        <label>Payment Method</label>
         <select id="kaedah" required>
           <option value="Online Transfer">Online Transfer</option>
           <option value="Duit Tunai">Duit Tunai</option>
@@ -350,37 +453,38 @@
       </div>
 
       <div class="form-group">
-        <label>Catatan (Pilihan)</label>
-        <input type="text" id="catatan" class="input-field" placeholder="Contoh: Simpanan gaji">
+        <label>Commit Message / Catatan</label>
+        <input type="text" id="catatan" class="input-field" placeholder="e.g. Duit lebihan gaji bulan ini">
       </div>
 
-      <button type="submit" id="btnSubmit" class="btn-submit">
-        <span>📲</span> Simpan & Buka WhatsApp
+      <button type="submit" id="btnSubmit" class="btn-gh">
+        <span>🚀</span> Commit & Open WhatsApp
       </button>
     </form>
   </div>
 
-  <!-- SENARAI REKOD TERKINI -->
-  <div class="recent-card">
-    <h4>📋 Rekod Transaksi Terkini</h4>
+  <!-- RECENT COMMITS -->
+  <div class="gh-box">
+    <div class="commit-header">📜 Recent Commits</div>
     <div id="uiRecentList">
-      <div style="color: #94a3b8; font-size: 13px; text-align: center; padding: 12px 0;">Memuatkan data...</div>
+      <div style="color: var(--gh-muted); font-size: 12px; text-align: center; padding: 12px 0; font-family:'Fira Code', monospace;">
+        Fetching commits...
+      </div>
     </div>
   </div>
 
 </div>
 
-<!-- LOADING OVERLAY SCREEN -->
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-box">
-    <div class="spinner"></div>
-    <div class="loading-title" id="loadingTitle">Menyimpan Rekod...</div>
-    <div class="loading-desc" id="loadingDesc">Sila tunggu, rekod sedang dikemas kini ke Sheet.</div>
-  </div>
+<!-- LOADING OVERLAY -->
+<div class="gh-overlay" id="loadingOverlay">
+  <div class="gh-spinner"></div>
+  <div class="gh-overlay-title" id="loadingTitle">pushing_to_sheet...</div>
+  <div class="gh-overlay-desc" id="loadingDesc">Writing transaction logs to remote database.</div>
 </div>
 
 <script>
-  var NO_WHATSAPP = "60105350291";
+  // Nombor WhatsApp Sasaran Rasmi
+  const NO_WHATSAPP = "60105350291";
 
   window.onload = function() {
     google.script.run
@@ -399,85 +503,85 @@
     document.getElementById("uiPerempuan").innerText = "RM " + (data.totalPerempuan || "0.00");
     document.getElementById("uiTarget").innerText = data.targetSasaran || "20,000.00";
     
-    var pct = data.peratus || "0.0";
+    const pct = data.peratus || "0.0";
     document.getElementById("uiPeratus").innerText = pct + "%";
     document.getElementById("uiProgressFill").style.width = pct + "%";
 
-    var listDiv = document.getElementById("uiRecentList");
+    const listDiv = document.getElementById("uiRecentList");
     if (data.senaraiTerkini && data.senaraiTerkini.length > 0) {
-      var html = "";
-      for (var i = 0; i < data.senaraiTerkini.length; i++) {
-        var itm = data.senaraiTerkini[i];
-        html += '<div class="recent-item">' +
-                  '<div>' +
-                    '<div class="item-name">' + itm.nama + '</div>' +
-                    '<div class="item-tag">' + itm.kategori + ' • ' + itm.tarikh + '</div>' +
-                  '</div>' +
-                  '<div class="item-amount">+RM ' + itm.jumlah + '</div>' +
-                '</div>';
+      let html = '<ul class="commit-list">';
+      for (let i = 0; i < data.senaraiTerkini.length; i++) {
+        const itm = data.senaraiTerkini[i];
+        html += `
+          <li class="commit-item">
+            <div>
+              <div class="commit-desc"><span>📦</span> ${itm.nama}</div>
+              <div class="commit-tag">${itm.kategori} • ${itm.tarikh}</div>
+            </div>
+            <div class="commit-amt">+RM ${itm.jumlah}</div>
+          </li>`;
       }
+      html += '</ul>';
       listDiv.innerHTML = html;
     } else {
-      listDiv.innerHTML = '<div style="color: #94a3b8; font-size: 13px; text-align: center; padding: 10px 0;">Belum ada sebarang rekod.</div>';
+      listDiv.innerHTML = '<div style="color: var(--gh-muted); font-size: 12px; text-align: center; padding: 10px 0; font-family:\'Fira Code\', monospace;">No commit history.</div>';
     }
   }
 
-  function hantarRekodPantas(e) {
+  function hantarRekodGitHub(e) {
     e.preventDefault();
 
-    var overlay = document.getElementById("loadingOverlay");
-    var loadTitle = document.getElementById("loadingTitle");
-    var loadDesc = document.getElementById("loadingDesc");
+    const overlay = document.getElementById("loadingOverlay");
+    const loadTitle = document.getElementById("loadingTitle");
+    const loadDesc = document.getElementById("loadingDesc");
 
-    var nama = document.getElementById("nama").value;
-    var jumlah = document.getElementById("jumlah").value;
-    var kategori = document.getElementById("kategori").value;
-    var kaedah = document.getElementById("kaedah").value;
-    var catatan = document.getElementById("catatan").value;
+    const nama = document.getElementById("nama").value;
+    const jumlah = document.getElementById("jumlah").value;
+    const kategori = document.getElementById("kategori").value;
+    const kaedah = document.getElementById("kaedah").value;
+    const catatan = document.getElementById("catatan").value;
 
-    // 1. Sediakan tab awal untuk elak popup blocker
-    var waWindow = window.open("about:blank", "_blank");
+    // 1. Sediakan tab awal untuk elak popup blocker pelayar
+    const waWindow = window.open("about:blank", "_blank");
 
-    // 2. Aktifkan Loading Screen serta-merta semasa proses menyimpan
-    loadTitle.innerText = "Menyimpan Rekod...";
-    loadDesc.innerText = "Sila tunggu, rekod sedang dikemas kini ke Sheet.";
+    // 2. Aktifkan Loading Screen GitHub Style
+    loadTitle.innerText = "git push origin main...";
+    loadDesc.innerText = "Saving records to Google Sheets database.";
     overlay.style.display = "flex";
 
     // 3. Simpan data ke Google Sheet
     google.script.run
       .withSuccessHandler(function(res) {
         if (res && res.status === "success") {
-          // Tukar mesej loading kepada status redirect WhatsApp
-          loadTitle.innerText = "Membuka WhatsApp...";
-          loadDesc.innerText = "Draf mesej sedang disediakan...";
+          loadTitle.innerText = "redirecting_to_whatsapp...";
+          loadDesc.innerText = "Generating draft payload message.";
 
           updateDashboardUI(res.metrics);
 
-          var amtFormatted = parseFloat(jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2 });
+          const amtFormatted = parseFloat(jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2 });
           
-          var message = "💍 *REKOD TABUNG KAHWIN MASUK* 💍\n\n" +
-                        "🆔 *ID:* `" + res.transId + "`\n" +
-                        "👤 *Penyumbang:* " + nama + "\n" +
-                        "💵 *Jumlah Masuk:* RM " + amtFormatted + "\n" +
-                        "📂 *Kategori:* " + kategori + "\n" +
-                        "💳 *Kaedah:* " + kaedah + "\n" +
-                        "📝 *Catatan:* " + (catatan || '-') + "\n" +
-                        "⏰ *Masa:* " + res.timestamp + "\n\n" +
-                        "──────────────────────\n" +
-                        "💰 *JUMLAH TERKUMPUL:* *RM " + res.metrics.totalAll + "*\n" +
-                        "🎯 *KEMAJUAN SASARAN:* " + res.metrics.peratus + "%\n" +
-                        "👨 Lelaki: RM " + res.metrics.totalLelaki + "\n" +
-                        "👩 Perempuan: RM " + res.metrics.totalPerempuan + "\n" +
-                        "──────────────────────\n" +
-                        "_Alhamdulillah, rekod berjaya dikemaskini!_ ✨";
+          const message = `💍 *REKOD TABUNG KAHWIN MASUK* 💍\n\n` +
+                          `🆔 *ID:* \`${res.transId}\`\n` +
+                          `👤 *Penyumbang:* ${nama}\n` +
+                          `💵 *Jumlah Masuk:* RM ${amtFormatted}\n` +
+                          `📂 *Kategori:* ${kategori}\n` +
+                          `💳 *Kaedah:* ${kaedah}\n` +
+                          `📝 *Catatan:* ${catatan || '-'}\n` +
+                          `⏰ *Masa:* ${res.timestamp}\n\n` +
+                          `──────────────────────\n` +
+                          `💰 *JUMLAH TERKUMPUL:* *RM ${res.metrics.totalAll}*\n` +
+                          `🎯 *KEMAJUAN SASARAN:* ${res.metrics.peratus}%\n` +
+                          `👨 Lelaki: RM ${res.metrics.totalLelaki}\n` +
+                          `👩 Perempuan: RM ${res.metrics.totalPerempuan}\n` +
+                          `──────────────────────\n` +
+                          `_Alhamdulillah, rekod berjaya dikemaskini!_ ✨`;
 
-          var waUrl = "https://wa.me/" + NO_WHATSAPP + "?text=" + encodeURIComponent(message);
+          const waUrl = `https://wa.me/${NO_WHATSAPP}?text=${encodeURIComponent(message)}`;
 
           if (waWindow) {
             waWindow.location.href = waUrl;
           }
 
-          // Tutup loading screen selepas WhatsApp dipanggil
           setTimeout(function() {
             overlay.style.display = "none";
             document.getElementById("jumlah").value = "";
