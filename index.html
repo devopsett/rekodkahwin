@@ -164,6 +164,33 @@
       box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.12);
     }
 
+    /* Kotak Upload Resit */
+    .file-upload-box {
+      border: 1.5px dashed #cbd5e1;
+      padding: 12px;
+      border-radius: 12px;
+      background: #f8fafc;
+      text-align: center;
+      cursor: pointer;
+    }
+    .file-upload-box input {
+      display: none;
+    }
+    .file-upload-label {
+      font-size: 13px;
+      color: #64748b;
+      cursor: pointer;
+      display: block;
+      font-weight: 600;
+    }
+    .file-name-preview {
+      font-size: 11px;
+      color: var(--primary-dark);
+      margin-top: 4px;
+      font-weight: 700;
+      word-break: break-all;
+    }
+
     /* Action Button */
     .btn-submit {
       width: 100%;
@@ -333,7 +360,6 @@
         </select>
       </div>
 
-      <!-- KOTAK JUMLAH MASUK (DISERAGAMKAN SEPERTI INPUT LAIN) -->
       <div class="form-group">
         <label>Jumlah Masuk (RM)</label>
         <input type="number" step="0.01" min="0.01" id="jumlah" class="input-field" placeholder="Contoh: 300.00" required>
@@ -367,6 +393,16 @@
         <input type="text" id="catatan" class="input-field" placeholder="Contoh: Simpanan gaji">
       </div>
 
+      <!-- BAHAGIAN LAMPIRAN RESIT -->
+      <div class="form-group">
+        <label>Lampiran Resit (Pilihan: Gambar / PDF)</label>
+        <div class="file-upload-box" onclick="document.getElementById('fileResit').click()">
+          <input type="file" id="fileResit" accept="image/*,application/pdf" onchange="previewFile()">
+          <span class="file-upload-label" id="fileLabel">📎 Tekan untuk pilih fail resit</span>
+          <div class="file-name-preview" id="fileNamePreview"></div>
+        </div>
+      </div>
+
       <button type="submit" id="btnSubmit" class="btn-submit">
         <span>💾</span> Simpan & Sediakan WhatsApp
       </button>
@@ -374,7 +410,7 @@
 
     <!-- KOTAK TINDAKAN SELEPAS SIMPAN -->
     <div id="successActionBox">
-      <div style="font-weight: 800; font-size: 14px; color: #166534; margin-bottom: 2px;">✅ Data Berjaya Disimpan ke Sheet!</div>
+      <div style="font-weight: 800; font-size: 14px; color: #166534; margin-bottom: 2px;">✅ Data & Resit Berjaya Disimpan!</div>
       <div style="font-size: 12px; color: #15803d; margin-bottom: 8px;">Tekan butang hijau di bawah untuk buka WhatsApp terus:</div>
       <a id="btnWhatsAppDirect" href="#" class="btn-whatsapp-direct" target="_blank">📲 Buka WhatsApp (010-5350291)</a>
       <button type="button" class="btn-reset-form" onclick="resetBorangBaru()">+ Masukkan Rekod Baharu</button>
@@ -395,8 +431,8 @@
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-box">
     <div class="spinner"></div>
-    <div class="loading-title">Menyimpan Rekod...</div>
-    <div class="loading-desc">Sila tunggu sebentar, sedang dikemas kini ke Sheet.</div>
+    <div class="loading-title">Menyimpan Rekod & Resit...</div>
+    <div class="loading-desc">Sila tunggu sebentar, fail sedang dimuat naik.</div>
   </div>
 </div>
 
@@ -404,9 +440,31 @@
   const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymHn9GoYR0Sc0_PyPqfWfiGYVIZBcPdCV7Tos-PEa087PVj7ZmtGKMggj3IqSrMUk/exec";
   const NO_WHATSAPP = "60105350291";
 
+  let uploadedFileBase64 = "";
+  let uploadedFileName = "";
+
   window.addEventListener('DOMContentLoaded', () => {
     fetchDashboardData();
   });
+
+  function previewFile() {
+    const fileInput = document.getElementById('fileResit');
+    const label = document.getElementById('fileLabel');
+    const preview = document.getElementById('fileNamePreview');
+
+    if (fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      uploadedFileName = file.name;
+      label.innerText = "✅ Fail Dipilih:";
+      preview.innerText = file.name;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedFileBase64 = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
 
   function fetchDashboardData() {
     fetch(APPS_SCRIPT_URL)
@@ -435,10 +493,11 @@
       let html = "";
       for (let i = 0; i < data.senaraiTerkini.length; i++) {
         const itm = data.senaraiTerkini[i];
+        const resitLink = itm.resit && itm.resit !== "-" ? `<br><a href="${itm.resit}" target="_blank" style="color:#ec4899;font-weight:700;font-size:11px;">Lihat Resit</a>` : '';
         html += `<div class="recent-item">
                   <div>
                     <div class="item-name">${itm.nama}</div>
-                    <div class="item-tag">${itm.kategori} • ${itm.tarikh}</div>
+                    <div class="item-tag">${itm.kategori} • ${itm.tarikh} ${resitLink}</div>
                   </div>
                   <div class="item-amount">+RM ${itm.jumlah}</div>
                 </div>`;
@@ -470,7 +529,9 @@
       jumlah: jumlah,
       kategori: kategori,
       kaedah: kaedah,
-      catatan: catatan
+      catatan: catatan,
+      fileBase64: uploadedFileBase64,
+      fileName: uploadedFileName
     };
 
     fetch(APPS_SCRIPT_URL, {
@@ -485,6 +546,7 @@
         updateDashboardUI(res.metrics);
 
         const amtFormatted = parseFloat(jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2 });
+        const resitText = res.resitUrl && res.resitUrl !== "-" ? `\n🧾 *Pautan Resit:* ${res.resitUrl}` : '';
         
         const message = `💍 *REKOD TABUNG KAHWIN MASUK* 💍\n\n` +
                         `🆔 *ID:* \`${res.transId}\`\n` +
@@ -492,7 +554,8 @@
                         `💵 *Jumlah Masuk:* RM ${amtFormatted}\n` +
                         `📂 *Kategori:* ${kategori}\n` +
                         `💳 *Kaedah:* ${kaedah}\n` +
-                        `📝 *Catatan:* ${catatan || '-'}\n` +
+                        `📝 *Catatan:* ${catatan || '-'}` +
+                        `${resitText}\n` +
                         `⏰ *Masa:* ${res.timestamp}\n\n` +
                         `──────────────────────\n` +
                         `💰 *JUMLAH TERKUMPUL:* *RM ${res.metrics.totalAll}*\n` +
@@ -520,6 +583,10 @@
 
   function resetBorangBaru() {
     document.getElementById("recordForm").reset();
+    document.getElementById("fileLabel").innerText = "📎 Tekan untuk pilih fail resit";
+    document.getElementById("fileNamePreview").innerText = "";
+    uploadedFileBase64 = "";
+    uploadedFileName = "";
     document.getElementById("recordForm").style.display = "block";
     document.getElementById("successActionBox").style.display = "none";
   }
