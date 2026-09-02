@@ -508,7 +508,7 @@
     }
   }
 
-  function hantarRekod(e) {
+  async function hantarRekod(e) {
     e.preventDefault();
 
     const overlay = document.getElementById("loadingOverlay");
@@ -534,19 +534,38 @@
       fileName: uploadedFileName
     };
 
-    fetch(APPS_SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    })
-    .then(res => res.json())
-    .then(res => {
+    try {
+      const response = await fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      const res = await response.json();
+
       overlay.style.display = "none";
 
       if (res && res.status === "success") {
         updateDashboardUI(res.metrics);
 
         const amtFormatted = parseFloat(jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2 });
-        const resitText = res.resitUrl && res.resitUrl !== "-" ? `\n🧾 *Pautan Resit:* ${res.resitUrl}` : '';
+        
+        // Pemendekan Pautan Resit yang Kalis Ralat
+        let finalResitUrl = res.resitUrl || "-";
+        if (finalResitUrl !== "-" && !finalResitUrl.includes("Ralat")) {
+          try {
+            // Gunakan pemendek terus dari pelayar
+            const shortReq = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(finalResitUrl)}`);
+            if (shortReq.ok) {
+              const shortTxt = await shortReq.text();
+              if (shortTxt.startsWith("http")) {
+                finalResitUrl = shortTxt.trim();
+              }
+            }
+          } catch (e) {
+            // Jika pelayar sekat, pautan kekal dalam format ringkas drive.google.com/open?id=...
+          }
+        }
+
+        const resitText = (finalResitUrl && finalResitUrl !== "-") ? `\n🧾 *Pautan Resit:* ${finalResitUrl}` : '';
         
         const message = `💍 *REKOD TABUNG KAHWIN MASUK* 💍\n\n` +
                         `🆔 *ID:* \`${res.transId}\`\n` +
@@ -574,11 +593,10 @@
       } else {
         alert("Gagal simpan: " + (res ? res.message : "Ralat"));
       }
-    })
-    .catch(err => {
+    } catch (err) {
       overlay.style.display = "none";
       alert("Ralat sambungan: " + err.message);
-    });
+    }
   }
 
   function resetBorangBaru() {
