@@ -3,7 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Dashboard Tabung Kahwin</title>
+  <title>Tabung Kahwin</title>
+
+  <!-- PWA & Mobile Web App Meta -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#db2777">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TabungKahwin">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/8367/8367466.png">
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -443,6 +453,13 @@
   let uploadedFileBase64 = "";
   let uploadedFileName = "";
 
+  // 1. DAFTAR SERVICE WORKER UNTUK PWA APP INSTALL
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW fail:', err));
+    });
+  }
+
   window.addEventListener('DOMContentLoaded', () => {
     fetchDashboardData();
   });
@@ -493,7 +510,7 @@
       let html = "";
       for (let i = 0; i < data.senaraiTerkini.length; i++) {
         const itm = data.senaraiTerkini[i];
-        const resitLink = itm.resit && itm.resit !== "-" ? `<br><a href="${itm.resit}" target="_blank" style="color:#ec4899;font-weight:700;font-size:11px;">Lihat Resit</a>` : '';
+        const resitLink = itm.resit && itm.resit.startsWith("http") ? `<br><a href="${itm.resit}" target="_blank" style="color:#ec4899;font-weight:700;font-size:11px;">Lihat Resit</a>` : '';
         html += `<div class="recent-item">
                   <div>
                     <div class="item-name">${itm.nama}</div>
@@ -520,7 +537,7 @@
     const jumlah = document.getElementById("jumlah").value;
     const kategori = document.getElementById("kategori").value;
     const kaedah = document.getElementById("kaedah").value;
-    const catatan = document.getElementById("catatan").value;
+    const catatan = document.getElementById("catatan").value.trim();
 
     overlay.style.display = "flex";
 
@@ -548,11 +565,9 @@
 
         const amtFormatted = parseFloat(jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2 });
         
-        // Pemendekan Pautan Resit yang Kalis Ralat
-        let finalResitUrl = res.resitUrl || "-";
-        if (finalResitUrl !== "-" && !finalResitUrl.includes("Ralat")) {
+        let finalResitUrl = res.resitUrl || "";
+        if (finalResitUrl && !finalResitUrl.includes("Ralat")) {
           try {
-            // Gunakan pemendek terus dari pelayar
             const shortReq = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(finalResitUrl)}`);
             if (shortReq.ok) {
               const shortTxt = await shortReq.text();
@@ -560,21 +575,20 @@
                 finalResitUrl = shortTxt.trim();
               }
             }
-          } catch (e) {
-            // Jika pelayar sekat, pautan kekal dalam format ringkas drive.google.com/open?id=...
-          }
+          } catch (e) {}
         }
 
-        const resitText = (finalResitUrl && finalResitUrl !== "-") ? `\n🧾 *Pautan Resit:* ${finalResitUrl}` : '';
+        const catatanText = catatan ? `\n📝 *Catatan:* ${catatan}` : '';
+        const resitText = finalResitUrl ? `\n🧾 *Pautan Resit:* ${finalResitUrl}` : '';
         
         const message = `💍 *REKOD TABUNG KAHWIN MASUK* 💍\n\n` +
                         `🆔 *ID:* \`${res.transId}\`\n` +
                         `👤 *Penyumbang:* ${nama}\n` +
                         `💵 *Jumlah Masuk:* RM ${amtFormatted}\n` +
                         `📂 *Kategori:* ${kategori}\n` +
-                        `💳 *Kaedah:* ${kaedah}\n` +
-                        `📝 *Catatan:* ${catatan || '-'}` +
-                        `${resitText}\n` +
+                        `💳 *Kaedah:* ${kaedah}` +
+                        catatanText +
+                        resitText + `\n` +
                         `⏰ *Masa:* ${res.timestamp}\n\n` +
                         `──────────────────────\n` +
                         `💰 *JUMLAH TERKUMPUL:* *RM ${res.metrics.totalAll}*\n` +
